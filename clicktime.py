@@ -1,9 +1,15 @@
+# -*- coding: utf-8 -*-
+# @Author: boyac
+# @Date:   2017-04-18 21:41:10
+# @Last Modified by:   Boya Chiou
+# @Last Modified time: 2017-04-20 10:11:26
+
 #!/usr/bin/env python
 #
 # A simple library to interfaces with the ClickTime API as documented
 # at http://app.clicktime.com/api/1.3/help
 #
-# Copyright 2012 Michael Ihde
+# Copyright 2016 Michael Ihde, Boya Chiou
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,6 +27,7 @@ import base64
 import copy
 import json
 import datetime
+import requests
 
 class ClickTime(object):
     """
@@ -47,6 +54,7 @@ class ClickTime(object):
         for k, v in self.__session.items():
             setattr(self, str(k), str(v))
 
+
     def _get(self, url, headers=None):
         """
         Internal helper method for GET requests.
@@ -62,6 +70,7 @@ class ClickTime(object):
         connection.close()
         return data, resp.status, resp.reason
     
+
     def _post(self, url, headers=None, data=None):
         """
         Internal helper method for POST requests.
@@ -78,6 +87,7 @@ class ClickTime(object):
         connection.close()
         return data, resp.status, resp.reason
         
+
     def _parse(self, json_str, default=None):
         try:
             return json.loads(json_str)
@@ -85,6 +95,7 @@ class ClickTime(object):
             logging.error("Error parsing JSON '%s'", json_str)
             return default
         
+
     def session(self):
         """
         http://app.clicktime.com/api/1.3/help#GET_Session
@@ -93,6 +104,7 @@ class ClickTime(object):
         data = self._parse(data, None)
         return data
     
+
     def company(self, company_id=None):
         """
         http://app.clicktime.com/api/1.3/help#GET_Company
@@ -103,6 +115,7 @@ class ClickTime(object):
         data = self._parse(data, None)
         return data
 
+
     def user(self, company_id=None, user_id=None):
         """
         http://app.clicktime.com/api/1.3/help#GET_User
@@ -111,10 +124,11 @@ class ClickTime(object):
             company_id = self.CompanyID
         if user_id == None:
             user_id = self.UserID
-        data, status, reason = self._get("Companies/%s/Users/" % (company_id, user_id))
+        data, status, reason = self._get("Companies/%s/Users/%s" % (company_id, user_id))
         data = self._parse(data, None)
         return data
         
+
     def clients(self, client_id=None):
         """
         http://app.clicktime.com/api/1.3/help#GET_ClientsForUser
@@ -133,6 +147,7 @@ class ClickTime(object):
             return []
         return data
     
+
     def jobs(self, job_number=None, with_child_ids=True):
         """
         http://app.clicktime.com/api/1.3/help#GET_JobsForUser
@@ -154,6 +169,7 @@ class ClickTime(object):
             return []
         return data
     
+
     def tasks(self, task_number=None):
         """
         http://app.clicktime.com/api/1.3/help#GET_TasksForUser
@@ -172,6 +188,7 @@ class ClickTime(object):
             return []
         return data
     
+
     def timeentires(self, startdate=None, enddate=None):
         """
         http://app.clicktime.com/api/1.3/help#GET_TimeEntries
@@ -197,6 +214,7 @@ class ClickTime(object):
         data = self._parse(data, None)
         return data
     
+
     def create_timeentry(self, job_id, task_id, hours, date=None, comment=None, break_time=None):
         """
         http://app.clicktime.com/api/1.3/help#POST_CreateTimeEntry
@@ -223,84 +241,89 @@ class ClickTime(object):
         data = self._parse(data, None)
         return data
 
+
+    def expensesht(self, company_id=None, user_id=None):
+    	"""
+        http://app.clicktime.com/api/1.3/help#GET_ExpenseSheets
+        """
+        if company_id == None:
+            company_id = self.CompanyID
+        if user_id == None:
+            user_id = self.UserID
+        data, status, reason = self._get("Companies/%s/Users/%s/ExpenseSheets" % (company_id, user_id))
+        data = self._parse(data, None)
+        return data
+
+
+    def expense_item(self, company_id=None, user_id=None, expensesht_id=None):
+    	"""
+        http://app.clicktime.com/api/1.3/help#GET_ExpenseItems
+        """
+        if company_id == None:
+            company_id = self.CompanyID
+        if user_id == None:
+            user_id = self.UserID
+        data, status, reason = self._get("Companies/%s/Users/%s/ExpenseSheets/%s/ExpenseItems" % (company_id, user_id, expensesht_id))
+        data = self._parse(data, None)
+        return data
+
+
+    def create_expensesht(self, company_id=None, user_id=None, title=None, description=None, tracking_id=None, date=None):
+        """
+        http://app.clicktime.com/API/1.3/help#POST_CreateExpenseSheet
+        """
+        if date == None:
+            date = datetime.datetime.today()
+        elif type(date) == str:
+            date = datetime.datetime.strptime(date, ("%Y%m%d"))
+
+        data = {"Title": title,
+                "Description": description,
+                "TrackingID": tracking_id,
+                "ExpenseSheetDate": date.strftime("%Y%m%d"),
+                "HasForeignCurrency": True
+                }
+        
+        data = json.dumps(data)
+        data, status, reason = self._post("Companies/%s/Users/%s/ExpenseSheets" % (self.CompanyID, self.UserID), data=data)
+        data = self._parse(data, None)
+        return data
+
+
+    def create_expenseitem(self, company_id=None, user_id=None, ExpenseSheetID=None, amount=0, date=None):
+        """
+        http://app.clicktime.com/API/1.3/help#POST_CreateExpenseItem
+        """
+        if date == None:
+            date = datetime.datetime.today()
+        elif type(date) == str:
+            date = datetime.datetime.strptime(date, ("%Y%m%d"))
+       
+        data = {
+                "ExpenseDate": date.strftime("%Y%m%d"),
+                "ExpenseTypeID": ExpenseTypeID,
+                "Amount": Amount,
+                "PaymentTypeID": PaymentTypeID,
+                "Description": Description,
+                "JobID": JobID,
+                "BillToJob": True,
+                "Amount_Currency": Amount_Currency,
+                "Rate": Rate,
+                "HasForeignCurrency": True
+                }
+        
+       
+        data = json.dumps(data)
+        data, status, reason = self._post("Companies/%s/Users/%s/ExpenseSheets/%s/ExpenseItems" % (self.CompanyID, self.UserID, ExpenseSheetID), data=data)
+        data = self._parse(data, None)
+        return data
+
+
+
+
+
 if __name__ == "__main__":
     """
     Example implementation using the ClickTime class
     """
-    def pprint_dict(d):
-        ks = d.keys()
-        ks.sort()
-        for k in ks:
-            print "%-20s %s" % (k, d[k])
-        
-    from optparse import OptionParser
-    from pprint import pprint
-    import logging
-    logging.basicConfig()
-    
-    parser = OptionParser()
-    parser.add_option("-u", "--username")
-    parser.add_option("-p", "--password")
-    opts, args = parser.parse_args()
-    
-    ct = ClickTime(opts.username, opts.password)
-    
-    action = None
-    while len(args) > 0:
-        action = args.pop(0)
-        
-        if action == None or action == "session":
-            session = ct.session()
-            pprint_dict(session)
-        elif action == "jobs":
-            try:
-                job_number = args.pop(0)
-            except IndexError:
-                job_number = None
-            jobs = ct.jobs(job_number)
-            for job in jobs:
-                pprint_dict(job)
-                print
-        elif action == "tasks":
-            tasks = ct.tasks()
-            for task in tasks:
-                pprint_dict(task)
-                print
-        elif action == "timeentries":
-            timeentires = ct.timeentires()
-            for timeentry in timeentires:
-                pprint_dict(timeentry)
-                print
-        elif action == "create_timeentry":
-            job_number = args.pop(0)
-            task_number = args.pop(0)
-            hours = args.pop(0)
-            try:
-                date = args.pop(0)
-            except IndexError:
-                date = None
-            try:
-                comment = args.pop(0)
-            except IndexError:
-                comment = None
-                
-            jobs = ct.jobs(job_number)
-            if len(jobs) == 0:
-                parser.error("Could not find job with number '%s'" % job_number)
-            elif len(jobs) > 1:
-                parser.error("Multiple jobs with number '%s'" % job_number)
-            else:
-                job_id = jobs[0]["JobID"]
-                
-            tasks = ct.tasks(task_number)
-            if len(jobs) == 0:
-                parser.error("Could not find task with number '%s'" % task_number)
-            elif len(jobs) > 1:
-                parser.error("Multiple tasks with number '%s'" % task_number)
-            else:
-                task_id = tasks[0]["TaskID"]
-                
-            ct.create_timeentry(job_id, task_id, hours, date, comment)
-        else:
-            parser.error("Unknown command '%s'" % action)
-
+ 
