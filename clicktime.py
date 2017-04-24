@@ -308,4 +308,7 @@ if __name__ == "__main__":
     """
     Example implementation using the ClickTime class
     """
+    ct = ClickTime(id, pw)
+    ct.CompanyID
+    ct.UserID
  
