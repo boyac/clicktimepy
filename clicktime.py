@@ -302,13 +302,11 @@ class ClickTime(object):
 
 
 
-
-
 if __name__ == "__main__":
     """
     Example implementation using the ClickTime class
     """
-    ct = ClickTime(id, pw)
+    ct = ClickTime(login_id, login_pw)
     ct.CompanyID
     ct.UserID
  
