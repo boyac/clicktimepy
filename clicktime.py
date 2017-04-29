@@ -281,18 +281,50 @@ class ClickTime(object):
         elif type(date) == str:
             date = datetime.datetime.strptime(date, ("%Y%m%d"))
        
-        data = {
-                "ExpenseDate": date.strftime("%Y%m%d"),
-                "ExpenseTypeID": ExpenseTypeID,
-                "Amount": Amount,
-                "PaymentTypeID": PaymentTypeID,
+        def create_expenseitem(self, 
+                            company_id=None, 
+                            user_id=None, 
+                            ExpenseSheetID=None,
+                            Amount=0,
+                            Description=None,
+                            ExpenseDate=None,
+                            ExpenseItemID=None,
+                            ExpenseTypeID=None,
+                            JobID=None,
+                            PaymentTypeID=None,  
+                            Amount_Currency=None,
+                            Rate=None, 
+                            date=None):
+        """
+        http://app.clicktime.com/API/1.3/help#POST_CreateExpenseItem
+        """
+        if date == None:
+            date = datetime.datetime.today()
+        elif type(date) == str:
+            date = datetime.datetime.strptime(date, ("%Y%m%d"))
+       
+        data = {"Amount": Amount,
+                "Amount_Currency":"USD", #Foreign_Currency is not allowed
+                "BillToJob":True, #Not Supported
+                "Comment":"",
                 "Description": Description,
-                "JobID": JobID,
-                "BillToJob": True,
-                "Amount_Currency": Amount_Currency,
-                "Rate": Rate,
-                "HasForeignCurrency": True
+                "ExpenseDate": ExpenseDate,
+                "ExpenseItemID":"", #Shouldn't from my submission
+                #"ExpenseReceiptID":null,
+                "ExpenseReceiptURLs":[],
+                "ExpenseSheetID": ExpenseSheetID,
+                "ExpenseTypeID": ExpenseTypeID, #taxi="2e0taDJGrNCM",
+                #"HasForeignCurrency":True, #Not supported
+                "JobID": JobID, #Project_Name
+                "PaymentTypeID": PaymentTypeID, #VISA
+                #"Quantity":0.00,
+                #"Rate":0.0000
                 }
+        
+        data = json.dumps(data)
+        data, status, reason = self._post("Companies/%s/Users/%s/ExpenseSheets/%s/ExpenseItems" % (self.CompanyID, self.UserID, ExpenseSheetID), data=data)
+        data = self._parse(data, None)
+        return data
         
        
         data = json.dumps(data)
@@ -309,4 +341,20 @@ if __name__ == "__main__":
     ct = ClickTime(login_id, login_pw)
     ct.CompanyID
     ct.UserID
- 
+    
+    TFB_201704 = "<ExpenseSheetID>" 
+    ExpenseTypeID = "<ExpenseTypeID>"
+    PaymentTypeID = "<PaymentTypeID>"
+    
+    # BC_201704_TFB   
+    ct.create_expenseitem( company_id=ct.CompanyID, 
+                            user_id=ct.UserID, 
+                            ExpenseSheetID=TFB_201704,
+                            Amount=170,
+                            Description="Taxi to work",
+                            ExpenseDate="20170418",
+                            ExpenseTypeID=Taxi_kc,
+                            JobID=TFB,
+                            PaymentTypeID=VISA_kc,  
+                            )
+
