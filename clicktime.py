@@ -325,12 +325,6 @@ class ClickTime(object):
         data, status, reason = self._post("Companies/%s/Users/%s/ExpenseSheets/%s/ExpenseItems" % (self.CompanyID, self.UserID, ExpenseSheetID), data=data)
         data = self._parse(data, None)
         return data
-        
-       
-        data = json.dumps(data)
-        data, status, reason = self._post("Companies/%s/Users/%s/ExpenseSheets/%s/ExpenseItems" % (self.CompanyID, self.UserID, ExpenseSheetID), data=data)
-        data = self._parse(data, None)
-        return data
 
 
 
