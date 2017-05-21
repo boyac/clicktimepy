@@ -2,7 +2,7 @@
 # @Author: boyac
 # @Date:   2017-04-18 21:41:10
 # @Last Modified by:   Boya Chiou
-# @Last Modified time: 2017-04-20 10:11:26
+# @Last Modified time: 2017-05-21 21:09:37
 
 import httplib
 import base64
@@ -10,6 +10,8 @@ import copy
 import json
 import datetime
 import requests
+from os import listdir
+
 
 class ClickTime(object):
     """
@@ -24,7 +26,7 @@ class ClickTime(object):
     
     SERVER = "app.clicktime.com"
     URL_BASE = "/api/1.3"
-    
+
     def __init__(self, username, password):
         auth = base64.encodestring("%s:%s" % (username, password))[:-1] # remove the extra newline
         self.__headers = {"Authorization" : "Basic %s" % auth}
@@ -225,7 +227,7 @@ class ClickTime(object):
 
 
     def expensesht(self, company_id=None, user_id=None):
-    	"""
+        """
         http://app.clicktime.com/api/1.3/help#GET_ExpenseSheets
         """
         if company_id == None:
@@ -238,7 +240,7 @@ class ClickTime(object):
 
 
     def expense_item(self, company_id=None, user_id=None, expensesht_id=None):
-    	"""
+        """
         http://app.clicktime.com/api/1.3/help#GET_ExpenseItems
         """
         if company_id == None:
@@ -249,8 +251,9 @@ class ClickTime(object):
         data = self._parse(data, None)
         return data
 
+     
 
-    def create_expensesht(self, company_id=None, user_id=None, title=None, description=None, tracking_id=None, date=None):
+    def create_expensesht(self, company_id=None, user_id=None, Title=None, Description=None, TrackingID=None, date=None):
         """
         http://app.clicktime.com/API/1.3/help#POST_CreateExpenseSheet
         """
@@ -259,9 +262,9 @@ class ClickTime(object):
         elif type(date) == str:
             date = datetime.datetime.strptime(date, ("%Y%m%d"))
 
-        data = {"Title": title,
-                "Description": description,
-                "TrackingID": tracking_id,
+        data = {"Title": Title,
+                "Description": Description,
+                "TrackingID": TrackingID,
                 "ExpenseSheetDate": date.strftime("%Y%m%d"),
                 "HasForeignCurrency": True
                 }
@@ -269,19 +272,14 @@ class ClickTime(object):
         data = json.dumps(data)
         data, status, reason = self._post("Companies/%s/Users/%s/ExpenseSheets" % (self.CompanyID, self.UserID), data=data)
         data = self._parse(data, None)
-        return data
 
-
-    def create_expenseitem(self, company_id=None, user_id=None, ExpenseSheetID=None, amount=0, date=None):
-        """
-        http://app.clicktime.com/API/1.3/help#POST_CreateExpenseItem
-        """
-        if date == None:
-            date = datetime.datetime.today()
-        elif type(date) == str:
-            date = datetime.datetime.strptime(date, ("%Y%m%d"))
-       
-        def create_expenseitem(self, 
+        self.MyExpenseID = {}
+        self.MyExpenseID[Title] = data
+        print self.MyExpenseID
+        # return data
+        
+        
+    def create_expenseitem(self, 
                             company_id=None, 
                             user_id=None, 
                             ExpenseSheetID=None,
@@ -294,7 +292,9 @@ class ClickTime(object):
                             PaymentTypeID=None,  
                             Amount_Currency=None,
                             Rate=None, 
-                            date=None):
+                            date=None,
+                            ExpenseReceiptURLs=None,
+                            ExpenseReceiptID=None):
         """
         http://app.clicktime.com/API/1.3/help#POST_CreateExpenseItem
         """
@@ -310,7 +310,7 @@ class ClickTime(object):
                 "Description": Description,
                 "ExpenseDate": ExpenseDate,
                 "ExpenseItemID":"", #Shouldn't from my submission
-                #"ExpenseReceiptID":null,
+                "ExpenseReceiptID":ExpenseReceiptID,
                 "ExpenseReceiptURLs":[],
                 "ExpenseSheetID": ExpenseSheetID,
                 "ExpenseTypeID": ExpenseTypeID, #taxi="2e0taDJGrNCM",
@@ -327,27 +327,99 @@ class ClickTime(object):
         return data
 
 
+    def base64(self, image_path=None):
+        # with open("path/to/file.png", "rb") as f:
+        # mypath = 'kc201705'
+        imagefiles = [f for f in listdir(image_path)]
+        for i in imagefiles:
+            base_encoded = i.encode("base64")
+            return base_encoded
+
+        # with open(image_path, "rb") as f:
+        #     data = f.read()
+        #     #print data.encode("base64")
+        #     base_encoded = data.encode("base64")
+        #     return base_encoded
+
+
+    def upload_receipt(self, company_id=None, user_id=None, image_path=None):
+        """
+        http://app.clicktime.com/api/1.3/help#POST_Receipt
+        """   
+        self.MyInvoice = []
+ 
+        imagefiles = [f for f in listdir(image_path)]
+        for i in imagefiles:
+            encoded = i.encode("base64")
+            data = {#"ImageData": "[base64 encoded string]",
+                    "ImageData": "{0}".format(encoded),
+                    "fileType": "image/png"
+                    }   
+                    
+            data = json.dumps(data)
+            data, status, reason = self._post("Companies/%s/Users/%s/Receipts" % (self.CompanyID, self.UserID), data=data)
+            data = self._parse(data, None)
+
+            self.MyInvoice.append((i,data))
+        return self.MyInvoice
+         
+            # self.MyInvoice = {}
+            # self.MyInvoice[i] = data
+            # print self.MyInvoice    
+        
+
+def MyIDs(company_id=None, user_id=None, image_path=None):
+    #lst = ct.upload_receipt(company_id, user_id, image_path)
+    for i in lst:
+        print i
+
+        
 
 if __name__ == "__main__":
     """
     Example implementation using the ClickTime class
     """
-    ct = ClickTime(login_id, login_pw)
-    ct.CompanyID
-    ct.UserID
+    ct = ClickTime(loginid, loginpw)
+   
+    # General Keys:
+    # sample print: print ref['pym_VISA'] will return value
+    ref = { "job_TFB": "24i7bM8VCT1I",
+            "job_TBB": "2dAUSqDElHgM",
+            "exp_Taxi" : "2bUBVIgz_DDc",
+            "exp_Phone": "",
+            "exp_OtherExpense": "", 
+            "pym_VISA" : "2muJ90RaS5yI",
+           }
+
+    # STEP 1
+    # ExpenesSheet will only need to be created once
+    ct.create_expensesht(company_id=ct.CompanyID, user_id=ct.UserID, Title="BC_777_TESTER", Description=None, TrackingID=None, date=None)
+
     
-    TFB_201704 = "<ExpenseSheetID>" 
-    ExpenseTypeID = "<ExpenseTypeID>"
-    PaymentTypeID = "<PaymentTypeID>"
-    
-    # BC_201704_TFB   
-    ct.create_expenseitem( company_id=ct.CompanyID, 
+    # STEP 2
+    test_pic = "kc201705"
+    ct.upload_receipt(company_id=ct.CompanyID, user_id=ct.UserID, image_path=test_pic)
+
+
+    # STEP 3.1
+    TWD2USD = 777
+
+    # STEP 3.2
+    ct.create_expenseitem(  company_id=ct.CompanyID, 
                             user_id=ct.UserID, 
-                            ExpenseSheetID=TFB_201704,
-                            Amount=170,
+
+                            ExpenseSheetID=ct.MyExpenseID['BC_201777_TESTER'],
+                            # ExpenseSheetID="2Qhf2WrpgMXE",
+                            
+                            # ExpenseReceiptID=ct.MyInvoice['kc201705']['POST_ReceiptResult'][-14:-2],
+                            ExpenseReceiptID= "28sBv_VWEMfU",
+
+                            JobID=ref['job_TFB'],
+                            ExpenseTypeID=ref['exp_Taxi'],
+                            PaymentTypeID=ref['pym_VISA'], 
+                            
+                            Amount=170*TWD2USD,
                             Description="Taxi to work",
-                            ExpenseDate="20170418",
-                            ExpenseTypeID=Taxi_kc,
-                            JobID=TFB,
-                            PaymentTypeID=VISA_kc,  
+                            ExpenseDate="20170418"
                             )
+
