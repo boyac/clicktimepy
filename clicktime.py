@@ -331,21 +331,6 @@ class ClickTime(object):
         return data
 
 
-    # def base64(self, image_path=None):
-    #     # with open("path/to/file.png", "rb") as f:
-    #     # mypath = 'kc201705'
-    #     imagefiles = [f for f in listdir(image_path)]
-    #     for i in imagefiles:
-    #         base_encoded = i.encode("base64")
-    #         return base_encoded
-
-    #     # with open(image_path, "rb") as f:
-    #     #     data = f.read()
-    #     #     #print data.encode("base64")
-    #     #     base_encoded = data.encode("base64")
-    #     #     return base_encoded
-
-
     def upload_receipt(self, company_id=None, user_id=None, image_path=None):
         """
         http://app.clicktime.com/api/1.3/help#POST_Receipt
@@ -373,30 +358,13 @@ class ClickTime(object):
         # Output results to a txt file
         with open('MyInvoice.txt', 'w') as f:
             for i in self.MyInvoice:
-                f.write(str(i)+'\n')          
-            # print self.MyInvoice
-            # return data
-            # print data
-
-            # To recover if necessary
-            #self.MyInvoice = {}
-            #self.MyInvoice[i] = data
-            #print self.MyInvoice    
-
-
-#def MyIDs(company_id=None, user_id=None, image_path=None):
-# def MyIDs():
-#     #lst = ct.upload_receipt(company_id, user_id, image_path)
-#     for i in MyInvoice:
-#         print i
+                f.write(str(i)+'\n')
 
 
 def MyTemplate(Amount=None, TWD2USD=None, Description = "N/A", ExpenseDate=None, sheet_name=None, image_name=None, SheetID=None, ReceiptID=None):
     ct.create_expenseitem(  company_id=ct.CompanyID, 
                             user_id=ct.UserID, 
 
-                            #ExpenseSheetID=ct.MyExpenseID[sheet_name],
-                            #ExpenseReceiptID=ct.MyInvoice['test_pic.jpg']['POST_ReceiptResult'][-14:-2],
                             ExpenseSheetID = SheetID,
                             ExpenseReceiptID = ReceiptID,
 
