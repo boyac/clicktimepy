@@ -8,6 +8,7 @@ only supports a small number of functions, but more will be added.
 ============
 Expense Submission
 Author: Boya Chiou
+Last Modified: 2017-06-13
 ============ 
 
 Step 1: 
@@ -23,5 +24,5 @@ Execute script and choose option 2 to upload the Output.txt.
 Process Completed!
 
 * Note: 
-Please be aware, the default setting is for Projct TFB, Transportation, and VISA payment items.
+Please be aware, the default setting is for Projct ***, Transportation, and VISA payment items.
 You may be able to customized them in the script or via ClickTime's page.
