@@ -11,7 +11,7 @@ Last Modified: 2017-07-31
 
 * Step 1: 
 Save receipt images in a form of 'sequence_amount_description_date.jpg', e.g. '01_170_taxi to work_20170701.jpg'
-Python rsplit function will slice strings according to delimiters and indexes
+Python rsplit function will slice strings according to delimiters and indexes.
 
 * Step 2: 
 Execute script and choose option 1 in command window to create a new sheet and automate images uploading.
