@@ -7,7 +7,7 @@ only supports a small number of functions, but more will be added.
 
 ### Expense Submission
 Author: Boya Chiou
-Last Modified: 2017-07-31
+/ Last Modified: 2017-07-31
 
 * Step 1: 
 Save receipt images in a form of 'sequence_amount_description_date.jpg', e.g. '01_170_taxi to work_20170701.jpg'
