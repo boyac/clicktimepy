@@ -12,7 +12,7 @@ Last Modified: 2017-06-13
 ============ 
 
 Step 1: 
-Save receiptimages in a form of 'amount_description_date.jpg', e.g. '170_taxi to work_20170701.jpg'
+Save receiptimages in a form of 'sequence_amount_description_date.jpg', e.g. '01_170_taxi to work_20170701.jpg'
 
 Step 2: 
 Execute script and choose option 1 to create a new sheet and automate images uploading.
