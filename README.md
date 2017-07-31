@@ -9,15 +9,15 @@ only supports a small number of functions, but more will be added.
 Author: Boya Chiou
 Last Modified: 2017-07-31
 
-##### Step 1: 
+* Step 1: 
 Save receiptimages in a form of 'sequence_amount_description_date.jpg', e.g. '01_170_taxi to work_20170701.jpg'
 
-##### Step 2: 
+* Step 2: 
 Execute script and choose option 1 to create a new sheet and automate images uploading.
 This execution will return an Output.txt, prepared for Expense items submission.
 You will need to change "ThisMonthRate" for your exchange rate.
 
-##### Step 3: 
+* Step 3: 
 Execute script and choose option 2 to upload the Output.txt.
 Process Completed!
 
