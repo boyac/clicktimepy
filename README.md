@@ -21,6 +21,3 @@ You will need to change "ThisMonthRate" for your exchange rate.
 Execute script and choose option 2 to upload the Output.txt.
 Process Completed!
 
-* Note: 
-Please be aware, the default setting is for Projct ***, Transportation, and VISA payment items.
-You may be able to customized them in the script or via ClickTime's page.
