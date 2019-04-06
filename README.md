@@ -1,7 +1,6 @@
-### Introduction
-
+if this project helps you reduce the time to develop, you could buy me a cup of coffee :)[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://paypal.me/boyac?locale.x=en_US)
+### Description
 This library is a Python interface to the clicktime.com REST API.  
-- if this project helps you reduce the time to develop, you could buy me a cup of coffee :)[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://paypal.me/boyac?locale.x=en_US)
 
 
 ### Expense Submission
