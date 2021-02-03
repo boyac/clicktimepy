@@ -1,5 +1,6 @@
 - You can contribute to the project by reporting bugs, suggesting enhancements. 
-*You can also buy me a cup of coffee :)*[![paypal](http://rickrduncan.com/wp-content/uploads/2017/11/buy-me-coffee-paypal.png)](https://paypal.me/boyac?locale.x=en_US)
+*You can also buy me a cup of coffee :)
+</br>*[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://paypal.me/boyac?locale.x=en_US)
 
 ### Description
 This library is a Python interface to the clicktime.com REST API. ClickTime is an application that makes it easy to track, plan, and manage employee time.
