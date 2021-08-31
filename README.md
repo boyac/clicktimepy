@@ -10,6 +10,8 @@ This library is a Python interface to the clicktime.com REST API. ClickTime is a
 Author: Boya Chiou
 / Last Modified: 2017-07-31
 
+Python module for clicktime.com REST API for bill processing, added expense submission functions.
+
 * Step 1: 
 Save receipt images in a form of 'sequence_amount_description_date.jpg', e.g. '01_170_taxi to work_20170701.jpg'
 Python rsplit function will slice strings according to delimiters and indexes.
